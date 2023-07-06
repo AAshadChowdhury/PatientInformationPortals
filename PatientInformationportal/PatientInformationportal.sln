@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientInformationportal", "PatientInformationportal.csproj", "{543E1A0C-8E40-430A-A15E-4767A2FBB66C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatientInformationportal", "PatientInformationportal.csproj", "{543E1A0C-8E40-430A-A15E-4767A2FBB66C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientInformationPortalWebAPI", "..\PatientInformationPortalWebAPI\PatientInformationPortalWebAPI.csproj", "{A3DED399-59BD-4A5C-9649-85F6E3331BA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatientInformationPortalWebAPI", "..\PatientInformationPortalWebAPI\PatientInformationPortalWebAPI.csproj", "{A3DED399-59BD-4A5C-9649-85F6E3331BA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "..\Domain\Domain.csproj", "{2DE582D6-5B6C-487E-95B0-EC9EDE2DD2C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A3DED399-59BD-4A5C-9649-85F6E3331BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3DED399-59BD-4A5C-9649-85F6E3331BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3DED399-59BD-4A5C-9649-85F6E3331BA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DE582D6-5B6C-487E-95B0-EC9EDE2DD2C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DE582D6-5B6C-487E-95B0-EC9EDE2DD2C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DE582D6-5B6C-487E-95B0-EC9EDE2DD2C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DE582D6-5B6C-487E-95B0-EC9EDE2DD2C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
