@@ -44,11 +44,11 @@ namespace PatientInformationPortalWebAPI.Controllers
         [Route("AddPatient")]
         public async Task<Patient> AddPatient(PatientVM objPatientVM)
         {
+            Patient objPatient = new();
             if (objPatientVM != null)
             {
-                Patient objPatient = new ();
-                objPatient.Name = objPatientVM.Name;      
-                objPatient.Epilepsy = objPatientVM.Epilepsy;      
+                objPatient.Name = objPatientVM.Name;
+                objPatient.Epilepsy = objPatientVM.Epilepsy;
                 objPatient.DiseaseInformationId = objPatientVM.DiseaseInformationId;
                 List<NCD_Details> NCD_Details = new List<NCD_Details>();
                 if (objPatientVM.NCDs != null)
@@ -59,7 +59,7 @@ namespace PatientInformationPortalWebAPI.Controllers
                         {
                             PatientID = objPatientVM.Id,
                             NCDID = Convert.ToInt32(items)
-                        }) ;
+                        });
                     }
                 }
                 List<Allergies_Details> Allergies_Details = new List<Allergies_Details>();
