@@ -1,0 +1,421 @@
+﻿@{
+    ViewData["Title"] = "Patient list";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <title>Patient Details</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        table.dataTable {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            border-collapse: collapse;
+        }
+
+            table.dataTable thead th,
+            table.dataTable tfoot th {
+                font-weight: bold;
+                border: 1px solid #dee2e6;
+            }
+
+            table.dataTable tbody td {
+                border: 1px solid #dee2e6;
+            }
+    </style>
+</head>
+
+<body>
+    <input type="hidden" id="patientId" name="patientId" value="">
+
+    <table id="dt-patient-list" class="display">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Disease Information ID</th>
+                <th>Epilepsy</th>
+                <!-- Add more column headers for other patient details -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Populate table rows dynamically using JavaScript -->
+        </tbody>
+    </table>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Patient</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form -->
+
+                    <form id="patientForm">
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-2 col-form-label">Patient Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="disease" class="col-sm-2 col-form-label">Disease Name</label>
+                            <div class="col-sm-10">
+                                <select id="disease" name="disease" class="form-control" required>
+                                    <!-- Disease Name options will be populated dynamically from API -->
+                                    <!-- Disease Name options will be populated dynamically from API -->
+                                    <option value="1">Hypertension</option>
+                                    <option value="2">Diabetes Mellitus</option>
+                                    <option value="3">Coronary Artery Disease</option>
+                                    <option value="4">Chronic Obstructive Pulmonary Disease</option>
+                                    <option value="5">Cancer</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="epilepsy" class="col-sm-2 col-form-label">Epilepsy</label>
+                            <div class="col-sm-10">
+                                <select id="epilepsy" name="epilepsy" class="form-control" required>
+                                    <option value="0">Yes</option>
+                                    <option value="1">No</option>
+                                    <!-- Epilepsy options will be populated dynamically from enum values -->
+                                </select>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="row">
+                            <label for="NCDs" class="col-xs-2" style="padding-top:4%">Others NCDs</label>
+                            <div class="col-xs-4">
+                                <select name="from" id="multiselect1" class="form-control" size="8" multiple="multiple">
+                                    <!-- Options for the multi-select -->
+                                    <option value="1">Asthma</option>
+                                    <option value="2">Cancer</option>
+                                    <option value="3">Disorders of ear</option>
+                                    <option value="4">Disorders of eye</option>
+                                    <option value="5">Mental illness</option>
+                                    <option value="6">Oral health problems</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2" style="padding-top:4%">
+                                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect1', 'multiselect_to1')">Add &gt;</button>
+                                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect_to1', 'multiselect1')">&lt; Remove</button>
+                            </div>
+                            <div class="col-xs-4">
+                                <select name="to" id="multiselect_to1" class="form-control" size="8" multiple="multiple">
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <label for="Allergies" class="col-xs-2" style="padding-top:4%">Allergies</label>
+                            <div class="col-xs-4">
+                                <select name="from" id="multiselect2" class="form-control" size="8" multiple="multiple">
+                                    <!-- Options for the multi-select -->
+                                    <option value="1">Drugs - Penicillin</option>
+                                    <option value="2">Drugs - Others</option>
+                                    <option value="3">Animals</option>
+                                    <option value="4">Food</option>
+                                    <option value="5">Ointments</option>
+                                    <option value="6">Plant</option>
+                                    <option value="7">Sprays</option>
+                                    <option value="8">Others</option>
+                                    <option value="9">No Allergies</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2" style="padding-top:4%">
+                                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect2', 'multiselect_to2')">Add &gt;</button>
+                                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect_to2', 'multiselect2')">&lt; Remove</button>
+                            </div>
+                            <div class="col-xs-4">
+                                <select name="to" id="multiselect_to2" class="form-control" size="8" multiple="multiple">
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="row">
+                            <div class="col-xs-2">
+
+                            </div>
+                            <div class="col-xs-4">
+
+                            </div>
+
+                            <div class="col-xs-2">
+                                <div class="form-group">
+                                    <button type="button" id="saveButton" class="btn btn-block" style="background-color: #0a3fd5; color: white; }"> Update </button>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4">
+
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="saveButton" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function moveOptions(sourceId, destinationId) {
+            var sourceSelect = document.getElementById(sourceId);
+            var destinationSelect = document.getElementById(destinationId);
+
+            for (var i = 0; i < sourceSelect.options.length; i++) {
+                var option = sourceSelect.options[i];
+                if (option.selected) {
+                    destinationSelect.appendChild(option);
+                    i--;
+                }
+            }
+        }
+
+       
+       
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#multiselect').multiselect();
+
+        });
+        //var datatable=new DataTable('#dt-patient-list');
+        patient_list_table = new DataTable('#dt-patient-list', {
+            paging: false,
+            select: true,
+            columnDefs: [{
+                targets: 0,
+                visible: false,
+                searchable: false,
+            }],
+            columns: [{
+                data: 'id'
+            }, // Assuming the first column is the patient ID
+            {
+                data: 'name'
+            }, // Assuming the second column is the patient name
+            {
+                data: 'diseaseInformationId'
+            },
+            {
+                data: 'epilepsy'
+            },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    // Render the column with buttons for delete and edit
+                    return `<button class="btn btn-danger delete-btn" data-id="${data.id}">Delete</button>
+                <button class="btn btn-primary edit-btn" data-id="${data.id}">Edit</button>`;
+                }
+            }]
+        });
+
+        function loadPatientDetails() {
+            // Make an AJAX request to fetch patient details
+            $.ajax({
+                url: 'https://localhost:7224/api/Patient',
+                method: 'GET',
+                success: function (response) {
+                    // Call the function to populate the DataTable with patient data
+                    patientListHtml(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error:', error);
+                }
+            });
+        }
+
+        function patientListHtml(data) {
+            patient_list_table.clear().draw();
+
+            data.forEach(function (patient) {
+                patient_list_table.row.add(patient);
+            });
+
+            patient_list_table.draw();
+        }
+
+        // Call the function to load patient details when the page is ready
+        $(document).ready(function () {
+            loadPatientDetails();
+        });
+        // Edit button click event
+        $(document).on('click', '.edit-btn', function () {
+            var patientId = $(this).data('id');
+            // Set the patient ID value in the hidden field
+            $('#patientId').val(patientId);
+            // Make AJAX request to get patient details by ID
+            $.ajax({
+                url: 'https://localhost:7224/api/Patient/' + patientId,
+                method: 'GET',
+                dataType: 'json',
+                success: function (response) {
+
+                    // Extract the patient data from the "Result" property
+                    var patientData = response.Result;
+                    console.log(patientData);
+                    // Populate the form fields with the patient data
+
+                    $('#name').val(patientData.Name);
+                    $('#disease').val(patientData.DiseaseInformationId);
+                    $('#epilepsy').val(patientData.Epilepsy);
+
+                    // Match the value with the desired static text
+                    if (patientData.Epilepsy === "No") {
+                        $('#epilepsy').val(0);
+                    } else if (patientData.Epilepsy === "Yes") {
+                        $('#epilepsy').val(1);
+                    }
+                    // Define the mappings for NCDs
+                    var ncdMappings = {
+                        1: 'Asthma',
+                        2: 'Cancer',
+                        3: 'Disorders of ear',
+                        4: 'Disorders of eye',
+                        5: 'Mental illness',
+                        6: 'Oral health problems',
+                        // Add more mappings as needed
+                    };
+
+                    // Update the multiselect for NCDs
+                    var ncdOptions = '';
+                    patientData.NCDs.$values.forEach(function (ncd) {
+                        var ncdName = ncdMappings[ncd.NCDID] || '';  // Use the mapping or an empty string if not found
+                        ncdOptions += '<option value="' + ncd.NCDID + '">' + ncdName + '</option>';
+                    });
+                    $('#multiselect_to1').html(ncdOptions);
+
+                    // Select the options in the multiselect for NCDs
+                    var selectedNCDs = patientData.NCDs.$values.map(function (ncd) {
+                        return ncd.NCDID;
+                    });
+                    $('#multiselect_to1').val(selectedNCDs).trigger('change');
+
+
+                    // Define the mappings for Allergies
+                    var allergyMappings = {
+                        1: 'Drugs - Penicillin',
+                        2: 'Drugs - Others',
+                        3: 'Animals',
+                        4: 'Food',
+                        5: 'Ointments',
+                        6: 'Plant',
+                        7: 'Sprays',
+                        8: 'Others',
+                        9: 'No Allergies',
+                        // Add more mappings as needed
+                    };
+
+                    // Update the multiselect for Allergies
+                    var allergyOptions = '';
+                    patientData.Allergies.$values.forEach(function (allergy) {
+                        var allergyName = allergyMappings[allergy.AllergiesID] || '';  // Use the mapping or an empty string if not found
+                        allergyOptions += '<option value="' + allergy.AllergiesID + '">' + allergyName + '</option>';
+                    });
+                    $('#multiselect_to2').html(allergyOptions);
+
+                    // Select the options in the multiselect for Allergies
+                    var selectedAllergies = patientData.Allergies.$values.map(function (allergy) {
+                        return allergy.AllergiesID;
+                    });
+                    $('#multiselect_to2').val(selectedAllergies).trigger('change');
+
+
+                    //// Trigger the change event to reflect the updated selected options
+                    //$('#multiselect_to1').trigger('change');
+                    //$('#multiselect_to2').trigger('change');
+                    // Show the modal
+                    $('#editModal').modal('show');
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        $(document).on('click', '.delete-btn', function () {
+
+            var patientId = $(this).data('id');
+
+            // Make the AJAX request to delete the patient
+            $.ajax({
+                url: `https://localhost:7224/api/Patient/${patientId}`,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function (result) {
+                    //console.log(result);
+                    //alert(result);
+                    //window.location.href = `/Patient`;
+                    // Reload the window
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#saveButton').click(function (e) {
+            e.preventDefault(); // Prevent default button click behavior
+            var patientId = $('#patientId').val();
+            // Prepare request body
+            var requestBody = {
+                patientId: patientId,
+                name: $('#name').val(),
+                diseaseInformationId: parseInt($('#disease').val()),
+                epilepsy: parseInt($('#epilepsy').val()),
+                selectedNCDs: $('#multiselect_to1').val().map(Number),
+                selectedAllergies: $('#multiselect_to2').val().map(Number)
+            };
+            console.log(requestBody);
+            fetch(`https://localhost:7224/api/Patient/${patientId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle success response
+                    console.log(data);
+                    window.location.href = `/Patient`;
+                })
+                .catch(error => {
+                    // Handle error response
+                    console.log(error);
+                });
+        });
+    </script>
+</body>
+
+

@@ -1,0 +1,393 @@
+﻿@{
+    ViewData["Title"] = "Patient Entry Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /*  .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }*/
+    /*#container {
+        display: flex;
+        align-items: center;
+    }*/
+    #container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .select-pane {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 10px; /* Adjust the margin as needed */
+    }
+
+    .button-pane {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin: 0 10px; /* Adjust the margin as needed */
+    }
+
+    .label-container label {
+        margin-bottom: 0;
+    }
+
+
+
+    .label-container {
+        display: flex;
+        align-items: center;
+        margin-right: 20px; /* Adjust the margin as needed */
+    }
+
+        .label-container label {
+            margin-bottom: 0;
+        }
+
+    .pane {
+        width: 200px;
+        padding: 10px;
+    }
+
+        .pane button {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+    .form-container {
+        width: 80%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 2%;
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-bottom: 3%;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group select {
+            width: 100%;
+            height: 30px;
+        }
+
+        .form-group .multi-select {
+            height: 100px;
+        }
+
+        .form-group .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .form-group .btn {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .form-group .selected-items {
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+</style>
+
+<title>Patient Entry Form</title>
+
+<div class="form-container">
+    <form id="patientForm">
+        <div class="form-group row">
+            <label for="name" class="col-sm-2 col-form-label">Patient Name</label>
+            <div class="col-sm-10">
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="disease" class="col-sm-2 col-form-label">Disease Name</label>
+            <div class="col-sm-10">
+                <select id="disease" name="disease" class="form-control" required>
+                    <!-- Disease Name options will be populated dynamically from API -->
+                    <option value="1">Hypertension</option>
+                    <option value="2">Diabetes Mellitus</option>
+                    <option value="3">Coronary Artery Disease</option>
+                    <option value="4">Chronic Obstructive Pulmonary Disease</option>
+                    <option value="5">Cancer</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="epilepsy" class="col-sm-2 col-form-label">Epilepsy</label>
+            <div class="col-sm-10">
+                <select id="epilepsy" name="epilepsy" class="form-control" required>
+                    <option value="0">Yes</option>
+                    <option value="1">No</option>
+                    <!-- Epilepsy options will be populated dynamically from enum values -->
+                </select>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="row">
+            <label for="NCDs" class="col-xs-2" style="padding-top:4%">Others NCDs</label>
+            <div class="col-xs-4">
+                <select name="from" id="multiselect1" class="form-control" size="8" multiple="multiple">
+                    <!-- Options for the multi-select -->
+                    <option value="1">Asthma</option>
+                    <option value="2">Cancer</option>
+                    <option value="3">Disorders of ear</option>
+                    <option value="4">Disorders of eye</option>
+                    <option value="5">Mental illness</option>
+                    <option value="6">Oral health problems</option>
+                </select>
+            </div>
+            <div class="col-xs-2" style="padding-top:4%">
+                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect1', 'multiselect_to1')">Add &gt;</button>
+                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect_to1', 'multiselect1')">&lt; Remove</button>
+            </div>
+            <div class="col-xs-4">
+                <select name="to" id="multiselect_to1" class="form-control" size="8" multiple="multiple">
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <label for="Allergies" class="col-xs-2" style="padding-top:4%">Allergies</label>
+            <div class="col-xs-4">
+                <select name="from" id="multiselect2" class="form-control" size="8" multiple="multiple">
+                    <!-- Options for the multi-select -->
+                    <option value="1">Drugs - Penicillin</option>
+                    <option value="2">Drugs - Others</option>
+                    <option value="3">Animals</option>
+                    <option value="4">Food</option>
+                    <option value="5">Ointments</option>
+                    <option value="6">Plant</option>
+                    <option value="7">Sprays</option>
+                    <option value="8">Others</option>
+                    <option value="9">No Allergies</option>
+                </select>
+            </div>
+            <div class="col-xs-2" style="padding-top:4%">
+                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect2', 'multiselect_to2')">Add &gt;</button>
+                <button type="button" class="btn btn-block" style="background: white; border: 1px solid black; " onclick="moveOptions('multiselect_to2', 'multiselect2')">&lt; Remove</button>
+            </div>
+            <div class="col-xs-4">
+                <select name="to" id="multiselect_to2" class="form-control" size="8" multiple="multiple">
+                </select>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-xs-2">
+
+            </div>
+            <div class="col-xs-4">
+
+            </div>
+
+            <div class="col-xs-2">
+                <div class="form-group">
+                    <button type="button" id="saveButton" class="btn btn-block" style="background-color: #0a3fd5; color: white; }"> Save </button>
+                </div>
+            </div>
+
+            <div class="col-xs-4">
+
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+@section Scripts {
+    <script>
+        function moveOptions(sourceId, destinationId) {
+            var sourceSelect = document.getElementById(sourceId);
+            var destinationSelect = document.getElementById(destinationId);
+
+            for (var i = 0; i < sourceSelect.options.length; i++) {
+                var option = sourceSelect.options[i];
+                if (option.selected) {
+                    destinationSelect.appendChild(option);
+                    i--;
+                }
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#multiselect').multiselect();
+            
+        });
+
+        //$(document).ready(function () {
+        //    $('#saveButton').click(function (e) {
+        //        e.preventDefault(); // Prevent default button click behavior
+
+        //        // Get form data
+        //        var formData = {
+        //            name: $('#name').val(),
+        //            diseaseInformationId: $('#disease').val(),
+        //            epilepsy: $('#epilepsy').val(),
+        //            selectedNCDs: $('#multiselect_to1').val(),
+        //            selectedAllergies: $('#multiselect_to2').val()
+        //        };
+        //        console.log(formData);
+
+        //        $.ajax({
+        //            type: 'POST',
+        //            url: 'https://localhost:7224/api/Patient/AddPatient',
+        //            data: JSON.stringify(formData),
+        //            contentType: 'application/json',
+        //            dataType: 'json',
+        //            success: function (response) {
+        //                // Handle success response
+        //                console.log(response);
+        //            },
+        //            error: function (error) {
+        //                // Handle error response
+        //                console.log(error);
+        //            }
+        //        });
+        //    });
+        //});
+        $(document).ready(function () {
+            $('#saveButton').click(function (e) {
+                e.preventDefault(); // Prevent default button click behavior
+
+                // Prepare request body
+                var requestBody = {
+                    patientId: 0,
+                    name: $('#name').val(),
+                    diseaseInformationId: parseInt($('#disease').val()),
+                    epilepsy: parseInt($('#epilepsy').val()),
+                    selectedNCDs: $('#multiselect_to1').val().map(Number),
+                    selectedAllergies: $('#multiselect_to2').val().map(Number)
+                };
+                console.log(requestBody);
+                fetch('https://localhost:7224/api/Patient/AddPatient', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle success response
+                        console.log(data);
+                        window.location.href =`/Patient`;
+                    })
+                    .catch(error => {
+                        // Handle error response
+                        console.log(error);
+                    });
+            });
+        });
+
+
+
+        // JavaScript code for handling dynamic functionality
+        // ...
+
+        // Example code for populating dropdown options dynamically from API
+        const diseaseDropdown = document.getElementById('disease');
+        fetch('api/diseases') // Replace with your actual API endpoint
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(disease => {
+                    const option = document.createElement('option');
+                    option.value = disease.id;
+                    option.text = disease.diseaseName;
+                    diseaseDropdown.appendChild(option);
+                });
+            });
+
+        // Example code for populating enum options dynamically
+        //const epilepsyDropdown = document.getElementById('epilepsy');
+        //const epilepsyValues = [1, 2]; // Replace with your actual enum values
+        //epilepsyValues.forEach(value => {
+        //    const option = document.createElement('option');
+        //    option.value = value;
+        //    option.text = ["Yes","No"];
+        //    epilepsyDropdown.appendChild(option);
+        //});
+
+        // Example code for handling the add/remove buttons and displaying selected items
+        const addNCDButton = document.getElementById('addNCD');
+        const removeNCDButton = document.getElementById('removeNCD');
+        const selectedNCDsView = document.getElementById('selectedNCDsView');
+        const selectedNCDsDropdown = document.getElementById('selectedNCDs');
+
+        addNCDButton.addEventListener('click', () => {
+            const selectedOptions = Array.from(selectedNCDsDropdown.selectedOptions);
+            selectedOptions.forEach(option => {
+                const item = document.createElement('div');
+                item.textContent = option.text;
+                selectedNCDsView.appendChild(item);
+            });
+        });
+
+        removeNCDButton.addEventListener('click', () => {
+            const selectedItems = Array.from(selectedNCDsView.children);
+            selectedItems.forEach(item => {
+                item.remove();
+            });
+        });
+
+    </script>
+
+    <script>
+        // Get references to the select elements and buttons
+        const leftSelect = document.getElementById('leftSelect');
+        const rightSelect = document.getElementById('rightSelect');
+        const addBtn = document.getElementById('addBtn');
+        const removeBtn = document.getElementById('removeBtn');
+
+        // Function to move selected options from left to right
+        const moveOptionsToRight = () => {
+            const selectedOptions = Array.from(leftSelect.selectedOptions);
+            selectedOptions.forEach(option => {
+                rightSelect.appendChild(option);
+            });
+        };
+
+        // Function to move selected options from right to left
+        const moveOptionsToLeft = () => {
+            const selectedOptions = Array.from(rightSelect.selectedOptions);
+            selectedOptions.forEach(option => {
+                leftSelect.appendChild(option);
+            });
+        };
+
+        // Add event listener for the add button
+        addBtn.addEventListener('click', moveOptionsToRight);
+
+        // Add event listener for the remove button
+        removeBtn.addEventListener('click', moveOptionsToLeft);
+    </script>
+}
+

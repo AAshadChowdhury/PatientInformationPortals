@@ -10,52 +10,48 @@ namespace PatientInformationPortalWebAPI.Repository.PatientRepo
     public class PatientRepository : IPatientRepository
     {
 
-        private PatientDbContext _db;
 
 
+        private readonly PatientDbContext _context;
 
-        public PatientRepository(PatientDbContext db)
+        public PatientRepository(PatientDbContext context)
         {
-
-            _db = db;
-
+            _context = context;
         }
-        public async Task<int> Upsert(Patient entity)
+
+        public async Task<int> Add(Patient entity)
         {
-            using IDbContextTransaction transaction = _db.Database.BeginTransaction();
-            try
-            {
+            await _context.Patients.AddAsync(entity);
+            return await _context.SaveChangesAsync();
+        }
 
-                if (entity.Id < 1)
-                {
-                    
-                    await _db.Patients.AddAsync(entity);
-                    foreach (var item in entity.NCDs)
-                    {
-                        await _db.NCD_Details.AddAsync(item);
-                    }
-                    foreach (var item in entity.Allergies)
-                    {
-                        await _db.Allergies_Details.AddAsync(item);
-                    }
-                }
-                else
-                {
+        public async Task<int> Delete(int id)
+        {
+            var patient = await _context.Patients.FindAsync(id);
+            if (patient == null)
+                return 0;
 
+             _context.Patients.Remove(patient);
+            return await _context.SaveChangesAsync();
+        }
 
-                    _db.Patients.Update(entity);
-                }
+        public async Task<IEnumerable<Patient>> GetAll()
+        {
+            return await _context.Patients.ToListAsync();
+        }
 
-                await _db.SaveChangesAsync();
+        public async Task<Patient> GetById(int id)
+        {
 
-                transaction.Commit();
-                return entity.Id;
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                throw;
-            }
+            return await _context.Patients.Include(p => p.NCDs).Include(p => p.Allergies).FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<int> Update(Patient entity)
+        {
+            _context.Patients.Update(entity);
+            return await _context.SaveChangesAsync();
         }
     }
+
 }
+

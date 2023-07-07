@@ -8,7 +8,10 @@ namespace PatientInformationPortalWebAPI.Interfaces
         #region Ashad
 
         public IPatientRepository Patient { get; }
-       
+        public IAllergies_DetailsRepository Allergies_DetailsRepository { get; }
+        public INCD_DetailsRepository NCD_DetailsRepository { get; }
+        public void SaveChanges();
+        public void Dispose();
 
 
         #endregion

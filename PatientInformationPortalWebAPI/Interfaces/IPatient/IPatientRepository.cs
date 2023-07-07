@@ -3,8 +3,8 @@ using PatientInformationPortalWebAPI.ViewModels;
 
 namespace PatientInformationPortalWebAPI.Interfaces.IPatient
 {
-    public interface IPatientRepository
+    public interface IPatientRepository: IGenericRepository<Patient>
     {
-        Task<int> Upsert(Patient entity);
+       
     }
 }

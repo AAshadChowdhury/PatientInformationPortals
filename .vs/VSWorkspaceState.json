@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\PatientInformationPortalWebAPI"
   ],
+  "SelectedNode": "\\PatientInformationPortalWebAPI\\PatientInformationPortalWebAPI.csproj.user",
   "PreviewInSolutionExplorer": false
 }

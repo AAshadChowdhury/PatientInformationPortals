@@ -1,4 +1,4 @@
-﻿namespace PatientInformationPortalWebAPI.Repository
+﻿namespace PatientInformationPortalWebAPI.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
