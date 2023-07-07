@@ -12,7 +12,7 @@ namespace PatientInformationPortalWebAPI.Models
 
 
         public int DiseaseInformationId { get; set; }
-        public Epilepsy Epilepsy { get; set; }
+        public string Epilepsy { get; set; }
         public DiseaseInformation? DiseaseInformation { get; set; }
         public ICollection<NCD_Details>? NCDs { get; set; }
         public ICollection<Allergies_Details>? Allergies { get; set; }
@@ -26,10 +26,13 @@ namespace PatientInformationPortalWebAPI.Models
 
     public enum Epilepsy
     {
+        [Display(Name = "Yes")]
         Yes,
-        No
 
+        [Display(Name = "No")]
+        No
     }
+
 
     public class NCD
     {
