@@ -40,6 +40,7 @@ namespace PatientInformationPortalWebAPI.Repository.PatientRepo
             return await _context.Patients.ToListAsync();
         }
 
+
         public async Task<Patient> GetById(int id)
         {
 

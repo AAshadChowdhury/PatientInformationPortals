@@ -3,33 +3,36 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<head>
-    <title>Patient Details</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap.min.css">
-    <style>
-        body {
-            padding: 20px;
+
+@*<title>Patient Details</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap.min.css">*@
+<style>
+    .required {
+        color: red;
+    }
+   /* #dt-patient-list th {
+        text-align: center;
+    }*/
+    table.dataTable {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+        background-color: #fff;
+        border-collapse: collapse;
+    }
+
+        table.dataTable thead th,
+        table.dataTable tfoot th {
+            font-weight: bold;
+            border: 1px solid #dee2e6;
+            text-align: center;
         }
 
-        table.dataTable {
-            width: 100%;
-            max-width: 100%;
-            margin-bottom: 1rem;
-            background-color: #fff;
-            border-collapse: collapse;
+        table.dataTable tbody td {
+            border: 1px solid #dee2e6;
         }
+</style>
 
-            table.dataTable thead th,
-            table.dataTable tfoot th {
-                font-weight: bold;
-                border: 1px solid #dee2e6;
-            }
-
-            table.dataTable tbody td {
-                border: 1px solid #dee2e6;
-            }
-    </style>
-</head>
 
 <body>
     <input type="hidden" id="patientId" name="patientId" value="">
@@ -39,9 +42,9 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Disease Information ID</th>
+                @*<th>Disease Information ID</th>*@
                 <th>Epilepsy</th>
-                <!-- Add more column headers for other patient details -->
+               
                 <th>Actions</th>
             </tr>
         </thead>
@@ -53,7 +56,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModalLabel">Edit Patient</h5>
@@ -66,34 +69,29 @@
 
                     <form id="patientForm">
                         <div class="form-group row">
-                            <label for="name" class="col-sm-2 col-form-label">Patient Name</label>
+                            <label for="name" class="col-sm-2 col-form-label">Patient Name <span class="required">*</span></label>
                             <div class="col-sm-10">
                                 <input type="text" id="name" name="name" class="form-control" required>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="disease" class="col-sm-2 col-form-label">Disease Name</label>
+                            <label for="disease" class="col-sm-2 col-form-label">Disease Name <span class="required">*</span></label>
                             <div class="col-sm-10">
                                 <select id="disease" name="disease" class="form-control" required>
-                                    <!-- Disease Name options will be populated dynamically from API -->
-                                    <!-- Disease Name options will be populated dynamically from API -->
-                                    <option value="1">Hypertension</option>
-                                    <option value="2">Diabetes Mellitus</option>
-                                    <option value="3">Coronary Artery Disease</option>
-                                    <option value="4">Chronic Obstructive Pulmonary Disease</option>
-                                    <option value="5">Cancer</option>
+                                  
+
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="epilepsy" class="col-sm-2 col-form-label">Epilepsy</label>
+                            <label for="epilepsy" class="col-sm-2 col-form-label">Epilepsy <span class="required">*</span></label>
                             <div class="col-sm-10">
                                 <select id="epilepsy" name="epilepsy" class="form-control" required>
                                     <option value="0">Yes</option>
                                     <option value="1">No</option>
-                                    <!-- Epilepsy options will be populated dynamically from enum values -->
+                                 
                                 </select>
                             </div>
                         </div>
@@ -162,7 +160,7 @@
 
                             <div class="col-xs-2">
                                 <div class="form-group">
-                                    <button type="button" id="saveButton" class="btn btn-block" style="background-color: #0a3fd5; color: white; }"> Update </button>
+                                    <button type="button" id="updateButton" class="btn btn-block" style="background-color: #0a3fd5; color: white; }"> Update </button>
                                 </div>
                             </div>
 
@@ -176,7 +174,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="saveButton" class="btn btn-primary">Save</button>
+                    @*<button type="button" id="saveButton" class="btn btn-primary">Save</button>*@
                 </div>
             </div>
         </div>
@@ -196,8 +194,8 @@
             }
         }
 
-       
-       
+
+
     </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -206,7 +204,25 @@
     <script>
         $(document).ready(function () {
             $('#multiselect').multiselect();
+            $.ajax({
+                url: 'https://localhost:7224/api/Patient/DiseaseInformation',
+                method: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    // Extract the disease information data from the response
+                    var diseaseInfoData = response;
 
+                    // Populate the dropdown options with disease information data
+                    var dropdown = $('#disease');
+
+                    $.each(diseaseInfoData, function (index, disease) {
+                        dropdown.append($('<option>').val(disease.id).text(disease.diseaseName));
+                    });
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(xhr.responseText);
+                }
+            });
         });
         //var datatable=new DataTable('#dt-patient-list');
         patient_list_table = new DataTable('#dt-patient-list', {
@@ -216,16 +232,26 @@
                 targets: 0,
                 visible: false,
                 searchable: false,
-            }],
+            },
+            {
+                targets: '_all',
+                className: 'text-center', // Set the text alignment to center for all columns
+            },
+            {
+                targets: 'th',
+                className: 'text-center', // Set the text alignment to center for all headers
+            }
+            ],
+
             columns: [{
                 data: 'id'
             }, // Assuming the first column is the patient ID
             {
                 data: 'name'
             }, // Assuming the second column is the patient name
-            {
-                data: 'diseaseInformationId'
-            },
+            //{
+            //    data: 'diseaseInformationId'
+            //},
             {
                 data: 'epilepsy'
             },
@@ -234,9 +260,14 @@
                 render: function (data, type, row) {
                     // Render the column with buttons for delete and edit
                     return `<button class="btn btn-danger delete-btn" data-id="${data.id}">Delete</button>
-                <button class="btn btn-primary edit-btn" data-id="${data.id}">Edit</button>`;
+                    <button class="btn btn-primary edit-btn" data-id="${data.id}">Preview / Edit</button>`;
                 }
-            }]
+                }
+            ],
+            createdRow: function (row, data, dataIndex) {
+                // Set the text alignment to center for header cells
+                $(row).find('th').addClass('text-center');
+            }
         });
 
         function loadPatientDetails() {
@@ -291,9 +322,9 @@
 
                     // Match the value with the desired static text
                     if (patientData.Epilepsy === "No") {
-                        $('#epilepsy').val(0);
-                    } else if (patientData.Epilepsy === "Yes") {
                         $('#epilepsy').val(1);
+                    } else if (patientData.Epilepsy === "Yes") {
+                        $('#epilepsy').val(0);
                     }
                     // Define the mappings for NCDs
                     var ncdMappings = {
@@ -319,6 +350,10 @@
                         return ncd.NCDID;
                     });
                     $('#multiselect_to1').val(selectedNCDs).trigger('change');
+                    // Clear and set the options in the multiselect for NCDs
+                    $('#multiselect1 option').filter(function () {
+                        return selectedNCDs.indexOf($(this).val()) !== -1;
+                    }).remove();
 
 
                     // Define the mappings for Allergies
@@ -348,12 +383,15 @@
                         return allergy.AllergiesID;
                     });
                     $('#multiselect_to2').val(selectedAllergies).trigger('change');
+                    // Clear and set the options in the multiselect for NCDs
+                    //$('#multiselect2 option').filter(function () {
+                    //    return selectedAllergies.indexOf($(this).val()) !== -1;
+                    //}).remove();
+                    // Clear the options in multiselect2
 
 
-                    //// Trigger the change event to reflect the updated selected options
-                    //$('#multiselect_to1').trigger('change');
-                    //$('#multiselect_to2').trigger('change');
-                    // Show the modal
+
+
                     $('#editModal').modal('show');
                 },
                 error: function (xhr, textStatus, errorThrown) {
@@ -373,9 +411,7 @@
                 dataType: 'json',
                 success: function (result) {
                     //console.log(result);
-                    //alert(result);
-                    //window.location.href = `/Patient`;
-                    // Reload the window
+                    alert("Patient delete Success")
                     location.reload();
                 },
                 error: function (error) {
@@ -384,17 +420,35 @@
             });
         });
 
-        $('#saveButton').click(function (e) {
+        $('#updateButton').click(function (e) {
             e.preventDefault(); // Prevent default button click behavior
             var patientId = $('#patientId').val();
+            var selectedNCDs = $('#multiselect_to1').val() ? $('#multiselect_to1').val().map(Number) : [];
+            var selectedAllergies = $('#multiselect_to2').val() ? $('#multiselect_to2').val().map(Number) : [];
+
+            if (selectedNCDs.length === 0 || selectedAllergies.length === 0) {
+                // Display an error message if either of the arrays is empty
+                alert('Please select NCDs and Allergies');
+                return;
+            }
+
+            // Get the values of the input fields
+            var name = $('#name').val();
+            var diseaseInformationId = parseInt($('#disease').val());
+            var epilepsy = parseInt($('#epilepsy').val());
+            // Check if any of the properties are null or empty
+            if (!name || !diseaseInformationId) {
+                alert('Please fill in all required fields.');
+                return;
+            }
             // Prepare request body
             var requestBody = {
                 patientId: patientId,
-                name: $('#name').val(),
-                diseaseInformationId: parseInt($('#disease').val()),
-                epilepsy: parseInt($('#epilepsy').val()),
-                selectedNCDs: $('#multiselect_to1').val().map(Number),
-                selectedAllergies: $('#multiselect_to2').val().map(Number)
+                name: name,
+                diseaseInformationId: diseaseInformationId,
+                epilepsy: epilepsy,
+                selectedNCDs: selectedNCDs,
+                selectedAllergies: selectedNCDs
             };
             console.log(requestBody);
             fetch(`https://localhost:7224/api/Patient/${patientId}`, {
@@ -405,10 +459,17 @@
                 body: JSON.stringify(requestBody)
             })
                 .then(response => response.json())
-                .then(data => {
-                    // Handle success response
-                    console.log(data);
-                    window.location.href = `/Patient`;
+                .then(response => {
+                    if (response.success) {
+                        // Handle success response
+                        console.log('Patient updated successfully');
+                        alert('Patient updated successfully');
+                        $('#editModal').modal('hide'); // Close the modal
+                        window.location.reload(); // Reload the page after successful update
+                    } else {
+                        // Handle error response
+                        console.log('Error updating patient');
+                    }
                 })
                 .catch(error => {
                     // Handle error response

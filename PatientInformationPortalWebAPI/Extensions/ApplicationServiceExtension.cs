@@ -13,6 +13,7 @@ namespace PatientInformationPortalWebAPI.Extensions
         {
             // Register repositories
             services.AddScoped<IPatientRepository, PatientRepository>();
+            services.AddScoped<IDiseaseInformation_Repository, DiseaseInformationRepository>();
             services.AddScoped<IAllergies_DetailsRepository, Allergies_DetailsRepository>();
             services.AddScoped<INCD_DetailsRepository, NCD_DetailsRepository>();
 

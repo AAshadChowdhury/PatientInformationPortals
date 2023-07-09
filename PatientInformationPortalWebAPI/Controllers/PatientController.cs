@@ -8,6 +8,7 @@ using PatientInformationPortalWebAPI.Repository.PatientRepo;
 using PatientInformationPortalWebAPI.ViewModels;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Azure;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,7 +26,7 @@ namespace PatientInformationPortalWebAPI.Controllers
             _unitOfWork = unitOfWork;
         }
         // GET: api/<PatientController>
-        [HttpGet]
+      
         [HttpGet]
         public async Task<IEnumerable<Patient>> Get()
         {
@@ -35,6 +36,18 @@ namespace PatientInformationPortalWebAPI.Controllers
             // Return the list of patients as the response
             return patients;
         }
+        
+        [HttpGet]
+        [Route("DiseaseInformation")]
+        public async Task<IEnumerable<DiseaseInformation>> GetAllDiseaseForDropDown()
+        {
+            // Fetch diseaseInformations data from your data source
+            var diseaseInformations = await _unitOfWork.DiseaseInformationRepository.GetAll();
+
+            // Return the list of diseaseInformations as the response
+            return diseaseInformations;
+        }
+
 
         // GET api/<PatientController>/5
         [HttpGet("{id}")]
@@ -110,12 +123,7 @@ namespace PatientInformationPortalWebAPI.Controllers
         }
 
 
-        //// PUT api/<PatientController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-        // PUT api/<PatientController>/5
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] PatientViewModel model)
         {
@@ -168,7 +176,8 @@ namespace PatientInformationPortalWebAPI.Controllers
 
             _unitOfWork.SaveChanges();
 
-            return NoContent();
+            // Return a success response
+            return Ok(new { success = true, message = "Patient Updated successfully" });
         }
 
 
@@ -204,7 +213,7 @@ namespace PatientInformationPortalWebAPI.Controllers
                 //await _unitOfWork.SaveChanges();
 
                 // Return a success response
-                return Ok();
+                return Ok(new { success = true, message = "Patient deleted successfully" });
             }
             catch (Exception ex)
             {

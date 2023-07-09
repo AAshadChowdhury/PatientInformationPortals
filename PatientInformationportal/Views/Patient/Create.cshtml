@@ -14,6 +14,9 @@
         display: flex;
         align-items: center;
     }*/
+    .required {
+        color: red;
+    }
     #container {
         display: flex;
         align-items: center;
@@ -65,7 +68,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         padding: 2%;
-        margin-left: 3%;
+        margin-left: 10%;
         margin-right: 3%;
         margin-bottom: 3%;
     }
@@ -109,33 +112,27 @@
         }
 </style>
 
-<title>Patient Entry Form</title>
-
 <div class="form-container">
     <form id="patientForm">
         <div class="form-group row">
-            <label for="name" class="col-sm-2 col-form-label">Patient Name</label>
+            <label for="name" class="col-sm-2 col-form-label">Patient Name <span class="required">*</span></label>
             <div class="col-sm-10">
                 <input type="text" id="name" name="name" class="form-control" required>
             </div>
         </div>
 
         <div class="form-group row">
-            <label for="disease" class="col-sm-2 col-form-label">Disease Name</label>
+            <label for="disease" class="col-sm-2 col-form-label">Disease Name <span class="required">*</span></label>
             <div class="col-sm-10">
                 <select id="disease" name="disease" class="form-control" required>
                     <!-- Disease Name options will be populated dynamically from API -->
-                    <option value="1">Hypertension</option>
-                    <option value="2">Diabetes Mellitus</option>
-                    <option value="3">Coronary Artery Disease</option>
-                    <option value="4">Chronic Obstructive Pulmonary Disease</option>
-                    <option value="5">Cancer</option>
+                   
                 </select>
             </div>
         </div>
 
         <div class="form-group row">
-            <label for="epilepsy" class="col-sm-2 col-form-label">Epilepsy</label>
+            <label for="epilepsy" class="col-sm-2 col-form-label">Epilepsy <span class="required">*</span></label>
             <div class="col-sm-10">
                 <select id="epilepsy" name="epilepsy" class="form-control" required>
                     <option value="0">Yes</option>
@@ -240,7 +237,27 @@
     <script>
         $(document).ready(function () {
             $('#multiselect').multiselect();
-            
+            // Make AJAX request to fetch disease information
+            $.ajax({
+                url: 'https://localhost:7224/api/Patient/DiseaseInformation',
+                method: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    // Extract the disease information data from the response
+                    var diseaseInfoData = response;
+
+                    // Populate the dropdown options with disease information data
+                    var dropdown = $('#disease');
+
+                    $.each(diseaseInfoData, function (index, disease) {
+                        dropdown.append($('<option>').val(disease.id).text(disease.diseaseName));
+                    });
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(xhr.responseText);
+                }
+            });
+
         });
 
         //$(document).ready(function () {
@@ -274,120 +291,59 @@
         //        });
         //    });
         //});
-        $(document).ready(function () {
-            $('#saveButton').click(function (e) {
-                e.preventDefault(); // Prevent default button click behavior
 
-                // Prepare request body
-                var requestBody = {
-                    patientId: 0,
-                    name: $('#name').val(),
-                    diseaseInformationId: parseInt($('#disease').val()),
-                    epilepsy: parseInt($('#epilepsy').val()),
-                    selectedNCDs: $('#multiselect_to1').val().map(Number),
-                    selectedAllergies: $('#multiselect_to2').val().map(Number)
-                };
-                console.log(requestBody);
-                fetch('https://localhost:7224/api/Patient/AddPatient', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
+        $('#saveButton').click(function (e) {
+            e.preventDefault(); // Prevent default button click behavior
+            var selectedNCDs = $('#multiselect_to1').val() ? $('#multiselect_to1').val().map(Number) : [];
+            var selectedAllergies = $('#multiselect_to2').val() ? $('#multiselect_to2').val().map(Number) : [];
+
+            // Get the values of the input fields
+            var name = $('#name').val();
+            var diseaseInformationId = parseInt($('#disease').val());
+            var epilepsy = parseInt($('#epilepsy').val());
+
+            // Check if any of the properties are null or empty
+            if (!name || !diseaseInformationId) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            // Prepare request body
+            var requestBody = {
+                patientId: 0,
+                name: name,
+                diseaseInformationId: diseaseInformationId,
+                epilepsy: epilepsy,
+                selectedNCDs: selectedNCDs,
+                selectedAllergies: selectedAllergies
+            };
+            console.log(requestBody);
+            fetch('https://localhost:7224/api/Patient/AddPatient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle success response
+                    console.log(data);
+                    alert("Patient Saved Successfully");
+                    window.location.href = `/Patient`;
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle success response
-                        console.log(data);
-                        window.location.href =`/Patient`;
-                    })
-                    .catch(error => {
-                        // Handle error response
-                        console.log(error);
-                    });
-            });
-        });
-
-
-
-        // JavaScript code for handling dynamic functionality
-        // ...
-
-        // Example code for populating dropdown options dynamically from API
-        const diseaseDropdown = document.getElementById('disease');
-        fetch('api/diseases') // Replace with your actual API endpoint
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(disease => {
-                    const option = document.createElement('option');
-                    option.value = disease.id;
-                    option.text = disease.diseaseName;
-                    diseaseDropdown.appendChild(option);
+                .catch(error => {
+                    // Handle error response
+                    console.log(error);
                 });
-            });
-
-        // Example code for populating enum options dynamically
-        //const epilepsyDropdown = document.getElementById('epilepsy');
-        //const epilepsyValues = [1, 2]; // Replace with your actual enum values
-        //epilepsyValues.forEach(value => {
-        //    const option = document.createElement('option');
-        //    option.value = value;
-        //    option.text = ["Yes","No"];
-        //    epilepsyDropdown.appendChild(option);
-        //});
-
-        // Example code for handling the add/remove buttons and displaying selected items
-        const addNCDButton = document.getElementById('addNCD');
-        const removeNCDButton = document.getElementById('removeNCD');
-        const selectedNCDsView = document.getElementById('selectedNCDsView');
-        const selectedNCDsDropdown = document.getElementById('selectedNCDs');
-
-        addNCDButton.addEventListener('click', () => {
-            const selectedOptions = Array.from(selectedNCDsDropdown.selectedOptions);
-            selectedOptions.forEach(option => {
-                const item = document.createElement('div');
-                item.textContent = option.text;
-                selectedNCDsView.appendChild(item);
-            });
         });
 
-        removeNCDButton.addEventListener('click', () => {
-            const selectedItems = Array.from(selectedNCDsView.children);
-            selectedItems.forEach(item => {
-                item.remove();
-            });
-        });
+
+
+
+
 
     </script>
 
-    <script>
-        // Get references to the select elements and buttons
-        const leftSelect = document.getElementById('leftSelect');
-        const rightSelect = document.getElementById('rightSelect');
-        const addBtn = document.getElementById('addBtn');
-        const removeBtn = document.getElementById('removeBtn');
 
-        // Function to move selected options from left to right
-        const moveOptionsToRight = () => {
-            const selectedOptions = Array.from(leftSelect.selectedOptions);
-            selectedOptions.forEach(option => {
-                rightSelect.appendChild(option);
-            });
-        };
-
-        // Function to move selected options from right to left
-        const moveOptionsToLeft = () => {
-            const selectedOptions = Array.from(rightSelect.selectedOptions);
-            selectedOptions.forEach(option => {
-                leftSelect.appendChild(option);
-            });
-        };
-
-        // Add event listener for the add button
-        addBtn.addEventListener('click', moveOptionsToRight);
-
-        // Add event listener for the remove button
-        removeBtn.addEventListener('click', moveOptionsToLeft);
-    </script>
 }
 

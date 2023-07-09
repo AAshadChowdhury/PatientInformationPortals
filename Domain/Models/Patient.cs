@@ -29,7 +29,7 @@ namespace Domain.Models
     {
         Yes,
         No,
-        // Define your enum values here
+        
 
     }
 

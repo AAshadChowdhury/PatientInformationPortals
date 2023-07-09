@@ -1,3 +1,7 @@
+--lacal database server details(Data Source = (localdb)\\MSSQLLocalDB; database = Patientdb; TrustServerCertificate = True)
+Go
+Use Patientdb
+Go
 select * from DiseaseInformations
 select * from NCDs
 select * from Allergies

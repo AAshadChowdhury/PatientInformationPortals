@@ -47,4 +47,39 @@ namespace PatientInformationPortalWebAPI.Repository
         }
     }
 
-}
+    public class DiseaseInformationRepository : IDiseaseInformation_Repository
+    {
+        private readonly PatientDbContext _db;
+
+        public DiseaseInformationRepository(PatientDbContext db)
+        {
+            _db = db;
+        }
+
+        public Task<int> Add(DiseaseInformation entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<DiseaseInformation>> GetAll()
+        {
+            return await _db.DiseaseInformations.ToListAsync();
+        }
+
+        public Task<DiseaseInformation> GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> Update(DiseaseInformation entity)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    }
