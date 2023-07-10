@@ -33,6 +33,3 @@ To install and run the application locally, follow these steps:
 6. Open a web browser and navigate to https://localhost:7185 to access the application.
 Please note that the connection string and port number may vary based on your specific setup and configuration.
 
-## Dependencies
-
-- List any external dependencies or libraries used in the application.
