@@ -1,10 +1,10 @@
-﻿using PatientInformationPortalWebAPI.Models;
-using PatientInformationPortalWebAPI.ViewModels;
+﻿
+//using Domain.Models;
 
-namespace PatientInformationPortalWebAPI.Interfaces.IPatient
-{
-    public interface IPatientRepository: IGenericRepository<Patient>
-    {
+//namespace PatientInformationPortalWebAPI.Interfaces.IPatient
+//{
+//    public interface IPatientRepository: IGenericRepository<Patient>
+//    {
        
-    }
-}
+//    }
+//}

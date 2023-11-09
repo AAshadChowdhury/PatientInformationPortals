@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PatientInformationPortalWebAPI.Models;
+﻿using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace PatientInformationPortalWebAPI.DAL

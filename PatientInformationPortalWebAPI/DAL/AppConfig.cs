@@ -1,7 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using PatientInformationPortalWebAPI.Interfaces;
-using PatientInformationPortalWebAPI.Interfaces.IPatient;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PatientInformationPortalWebAPI.Interfaces;
-using PatientInformationPortalWebAPI.Interfaces.IPatient;
+using Application.Interfaces;
+using Application.Interfaces.IPatient;
 using PatientInformationPortalWebAPI.Repository;
 
 namespace PatientInformationPortalWebAPI.DAL

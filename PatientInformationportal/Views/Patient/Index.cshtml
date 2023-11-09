@@ -312,8 +312,9 @@
                 success: function (response) {
 
                     // Extract the patient data from the "Result" property
-                    var patientData = response.Result;
+                    var patientData = response;
                     console.log(patientData);
+                    console.log(response);
                     // Populate the form fields with the patient data
 
                     $('#name').val(patientData.Name);

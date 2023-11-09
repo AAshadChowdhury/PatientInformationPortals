@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using PatientInformationPortalWebAPI.DAL;
-using PatientInformationPortalWebAPI.Interfaces.IPatient;
-using PatientInformationPortalWebAPI.Models;
-using PatientInformationPortalWebAPI.ViewModels;
+using Application.Interfaces.IPatient;
+using Domain.Models;
 
 namespace PatientInformationPortalWebAPI.Repository.PatientRepo
 {

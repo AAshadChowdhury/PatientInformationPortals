@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PatientInformationPortalWebAPI.DAL;
-using PatientInformationPortalWebAPI.Interfaces;
-using PatientInformationPortalWebAPI.Interfaces.IPatient;
-using PatientInformationPortalWebAPI.Models;
-using PatientInformationPortalWebAPI.Repository.PatientRepo;
+using Application.Interfaces;
 using PatientInformationPortalWebAPI.ViewModels;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Azure;
+using MediatR;
+using Application.Tasks.Commands.CPatient;
+using Domain.Models;
+using Application.Tasks.Queries.QPatient;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,10 +19,12 @@ namespace PatientInformationPortalWebAPI.Controllers
     {
 
         private readonly IUnitOfWork _unitOfWork;
-        public PatientController(IUnitOfWork unitOfWork)
+        private readonly IMediator _mediator;
+        public PatientController(IUnitOfWork unitOfWork, IMediator mediator)
         {
             
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
         // GET: api/<PatientController>
       
@@ -31,7 +32,8 @@ namespace PatientInformationPortalWebAPI.Controllers
         public async Task<IEnumerable<Patient>> Get()
         {
             // Fetch patient data from your data source
-            var patients =  await _unitOfWork.Patient.GetAll();
+            //var patients =  await _unitOfWork.Patient.GetAll();
+            var patients =  await _mediator.Send(new GetAllPatientQuery());
 
             // Return the list of patients as the response
             return patients;
@@ -51,7 +53,7 @@ namespace PatientInformationPortalWebAPI.Controllers
 
         // GET api/<PatientController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var options = new JsonSerializerOptions
             {
@@ -59,7 +61,8 @@ namespace PatientInformationPortalWebAPI.Controllers
                 MaxDepth = 32
             };
 
-            var patient =  _unitOfWork.Patient.GetById(id);
+            //var patient =  _unitOfWork.Patient.GetById(id);
+            var patient = await _mediator.Send(new GetPatientByIdQuery() { Id = id });
             if (patient == null)
             {
                 return NotFound();
@@ -88,8 +91,9 @@ namespace PatientInformationPortalWebAPI.Controllers
                 };
 
                 // Save patient to the database
-                await _unitOfWork.Patient.Add(patient);
-                _unitOfWork.SaveChanges();
+                //await _unitOfWork.Patient.Add(patient);
+                var patientID = await _mediator.Send(new CreatePatientCommand() { patient = patient });
+                //_unitOfWork.SaveChanges();
 
                 // Retrieve the assigned patient ID
                 var patientId = patient.Id;
@@ -134,7 +138,8 @@ namespace PatientInformationPortalWebAPI.Controllers
 
         
             // Retrieve the patient from the database based on the ID, including related NCDs and Allergies
-            var patient = _unitOfWork.Patient.GetById(id).Result;
+            //var patient = _unitOfWork.Patient.GetById(id).Result;
+            var patient = await _mediator.Send(new GetPatientByIdQuery(){ Id = id});
             if (patient == null)
             {
                 return NotFound();
@@ -144,8 +149,9 @@ namespace PatientInformationPortalWebAPI.Controllers
             patient.Name = model.Name;
             patient.DiseaseInformationId = model.DiseaseInformationId;
             patient.Epilepsy = model.Epilepsy.ToString();
-            await _unitOfWork.Patient.Update(patient);
-            _unitOfWork.SaveChanges();
+            //await _unitOfWork.Patient.Update(patient);
+            var patientID = await _mediator.Send(new UpdatePatientCommand() { patient = patient });
+            //_unitOfWork.SaveChanges();
 
             // Update NCDs and Allergies based on the SelectedNCDs and SelectedAllergies in the model
             // Clear existing NCDs and Allergies for the patient
@@ -190,7 +196,9 @@ namespace PatientInformationPortalWebAPI.Controllers
             try
             {
                 // Retrieve the patient from the database based on the ID, including related NCDs and Allergies
-                var patient = _unitOfWork.Patient.GetById(id).Result;
+                //var patient = _unitOfWork.Patient.GetById(id).Result;
+
+                var patient= await _mediator.Send(new GetPatientByIdQuery() { Id = id });
 
                 if (patient == null)
                 {
@@ -209,7 +217,8 @@ namespace PatientInformationPortalWebAPI.Controllers
                 }
 
                 // Delete the patient from the database
-                await _unitOfWork.Patient.Delete(id);
+                //await _unitOfWork.Patient.Delete(id);
+                var patientID = await _mediator.Send(new DeletePatientCommand() { Id = id });
                 //await _unitOfWork.SaveChanges();
 
                 // Return a success response

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using PatientInformationPortalWebAPI.DAL;
 using PatientInformationPortalWebAPI.Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,7 +24,8 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+// Add MediatR to the services
+//builder.Services.AddMediatR();
 var app = builder.Build();
 app.UseCors(policy => policy.AllowAnyHeader()
 .AllowAnyMethod()
