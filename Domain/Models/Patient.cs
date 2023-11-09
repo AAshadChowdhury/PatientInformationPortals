@@ -8,8 +8,9 @@ namespace Domain.Models
         [Required(ErrorMessage = "Patient name is required")]
         public string? Name { get; set; }
 
-
+        [Required(ErrorMessage = "This Field is required")]
         public int DiseaseInformationId { get; set; }
+        [Required(ErrorMessage = "This Field is required")]
         public string Epilepsy { get; set; }
         public DiseaseInformation? DiseaseInformation { get; set; }
         public ICollection<NCD_Details>? NCDs { get; set; }
